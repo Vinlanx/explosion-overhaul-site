@@ -244,7 +244,7 @@
                 <p>> A NEW LEVEL OF DESTRUCTION_</p>
             </div>
             <div class="dev-status">
-                <p>// STATUS: DEVELOPMENT IN PROGRESS</p>
+                <p>// STATUS: DEVELOPMENT IN PROGRESS.</p>
             </div>
         </div>
     </header>
@@ -308,7 +308,7 @@
     </main>
 
     <footer class="text-center py-10 mt-16 border-t border-white/10">
-        <p class="text-gray-600 tracking-widest">&copy; 2025 EXPLOSION OVERHAUL</p>
+        <p class="text-gray-600 tracking-widest">© 2025 EXPLOSION OVERHAUL</p>
     </footer>
 
     <script>
@@ -367,21 +367,23 @@
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.z = 5;
+
+        // --- ОПТИМІЗАЦІЯ ДЛЯ iOS v4 ---
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
         const renderer = new THREE.WebGLRenderer({ 
             canvas: document.getElementById('particle-canvas'),
-            alpha: true 
+            alpha: true,
+            // Додаємо спеціальні параметри для iOS
+            powerPreference: isIOS ? 'low-power' : 'default',
+            precision: isIOS ? 'lowp' : 'highp'
         });
+
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-        // --- ОПТИМІЗАЦІЯ ДЛЯ МОБІЛЬНИХ v2 ---
-        // Більш надійний спосіб визначення мобільного пристрою
-        const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-
-        // Встановлюємо більш агресивні налаштування для мобільних
-        const particleCount = isMobile ? 250 : 2000;
-        const particleSize = isMobile ? 0.04 : 0.02;
-        // --- Кінець оптимізації ---
+        const particleCount = isIOS ? 250 : 2000;
+        const particleSize = isIOS ? 0.045 : 0.02;
         
         const positions = new Float32Array(particleCount * 3);
         const velocities = new Float32Array(particleCount * 3);
@@ -395,18 +397,17 @@
             positions[i3 + 1] = (Math.random() - 0.5) * 15;
             positions[i3 + 2] = (Math.random() - 0.5) * 15;
             
-            velocities[i3] = 0; // x
-            velocities[i3 + 1] = (Math.random() * 0.005) + 0.001; // y (upward drift)
-            velocities[i3 + 2] = 0; // z
+            velocities[i3] = 0;
+            velocities[i3 + 1] = (Math.random() * 0.005) + 0.001;
+            velocities[i3 + 2] = 0;
         }
         geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
         const material = new THREE.PointsMaterial({
-            size: particleSize, // Використовуємо змінну для розміру
+            size: particleSize,
             color: accentColor,
-            blending: THREE.AdditiveBlending,
-            transparent: true,
-            opacity: 0.7,
+            blending: isIOS ? THREE.NormalBlending : THREE.AdditiveBlending,
+            transparent: !isIOS,
             sizeAttenuation: true
         });
 
@@ -441,13 +442,11 @@
 
         // General resize listener
         window.addEventListener('resize', () => {
-            // Three.js camera
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-            // Grid Canvas
             if(gridCanvas) {
                 setupGrid();
                 drawGrid();
