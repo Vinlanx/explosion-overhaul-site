@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://vinlanx.github.io/explosion-overhaul-site/sitemap.xml
