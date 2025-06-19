@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -47,7 +47,16 @@
             z-index: -1;
         }
         
-        .scanlines {
+        
+		
+		.glow {
+           font-weight: bold;
+           color: var(--accent-color);
+           text-shadow: 0 0 8px var(--accent-color);
+          }
+		
+		
+		.scanlines {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
@@ -80,14 +89,13 @@
             position: relative;
         }
         
-        /* НОВИЙ СТИЛЬ: Заголовок, що "активується" */
         .hero h1 {
             font-family: 'Audiowide', sans-serif;
             font-size: clamp(3rem, 10vw, 6.5rem);
-            color: transparent; /* Початково текст прозорий */
+            color: transparent;
             text-transform: uppercase;
             position: relative;
-            -webkit-text-stroke: 1px var(--accent-color); /* Обводка літер */
+            -webkit-text-stroke: 1px var(--accent-color);
             animation: text-reveal 3s steps(20, end) forwards;
         }
 
@@ -101,12 +109,11 @@
                 text-shadow: 0 0 15px var(--accent-color);
             }
             100% {
-                color: #fff;
-                text-shadow: 0 0 5px #fff, 0 0 15px var(--accent-color);
+                color: var(--accent-color); /* Змінено на помаранчевий */
+                text-shadow: 0 0 20px var(--accent-color); /* Посилено тінь */
             }
         }
         
-        /* Typing effect for subtitle */
         .typewriter p {
             overflow: hidden; 
             border-right: .15em solid var(--accent-color);
@@ -114,9 +121,9 @@
             margin: 0 auto; 
             letter-spacing: .15em;
             animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
-            animation-delay: 2s; /* Затримка перед початком друкування */
-            opacity: 0; /* Початково невидимий */
-            animation-fill-mode: forwards; /* Зберігає кінцевий стан */
+            animation-delay: 2s;
+            opacity: 0;
+            animation-fill-mode: forwards;
         }
         @keyframes typing {
             from { width: 0; opacity: 1; }
@@ -126,15 +133,30 @@
             from, to { border-color: transparent }
             50% { border-color: var(--accent-color); }
         }
-
-
         
-
-        @keyframes pulse-glow-bottom {
-            0%, 100% { opacity: 0.2; transform: translateX(-50%) scale(1); }
-            50% { opacity: 0.5; transform: translateX(-50%) scale(1.05); }
-            85% { opacity: 0.4; }
-            90% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+        /* Новий стиль для повідомлення про розробку */
+        .dev-status {
+            margin-top: 2rem;
+            display: inline-block;
+            background: rgba(255, 138, 0, 0.05);
+            border: 1px solid rgba(255, 138, 0, 0.2);
+            padding: 0.5rem 1rem;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.9rem;
+            opacity: 0;
+            animation: fade-in-flicker 4s forwards;
+            animation-delay: 3s; /* з'являється після основного заголовку */
+        }
+        
+        @keyframes fade-in-flicker {
+            0% { opacity: 0; }
+            50% { opacity: 0; }
+            51% { opacity: 0.7; }
+            52% { opacity: 0.3; }
+            53% { opacity: 1; }
+            100% { opacity: 0.7; }
         }
 
 
@@ -218,13 +240,15 @@
     <div class="vignette"></div>
     <canvas id="particle-canvas"></canvas>
 
-
     <header class="hero">
         <div class="relative z-10">
-            <h1>EXPLOSION OVERHAUL mod</h1>
+            <h1>EXPLOSION OVERHAUL</h1>
             <div class="typewriter mt-4 text-xl md:text-2xl">
                 <p>> A NEW LEVEL OF DESTRUCTION_</p>
-				<p>> Dev</p>
+            </div>
+            <!-- Новий блок з повідомленням -->
+            <div class="dev-status">
+                <p>// STATUS: DEVELOPMENT IN PROGRESS</p>
             </div>
         </div>
     </header>
@@ -234,12 +258,12 @@
         <section class="text-center scroll-reveal">
             <h2 class="tracking-widest">DEBRIEFING: PROJECT OVERHAUL</h2>
             <p class="max-w-4xl mx-auto mt-6 text-lg md:text-xl leading-relaxed text-gray-400">
-                Забудьте все, що ви знали про вибухи у Minecraft. **Explosion Overhaul** — це мод, що перетворює кожен вибух на унікальне, кінематографічне та захоплююче видовище. Ми прагнемо до максимального реалізму, щоб ви відчували всю міць та наслідки кожного "буму!".
-            </p>
+    Forget everything you knew about explosions. <span class="glow">Explosion Overhaul</span> is a mod that transforms every explosion into a unique, cinematic, and breathtaking spectacle. We strive for maximum realism, so you feel the full power and consequences of every "boom!".
+</p>
         </section>
 
         <section class="scroll-reveal">
-            <h2 class="text-center mb-12 tracking-widest">ARCHIVED FOOTAGE</h2>
+            <h2 class="text-center mb-12 tracking-widest">VIDEO</h2>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div class="video-container relative h-0 pb-[56.25%] scroll-reveal">
                      <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/Fyw1Z-DGB0E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
@@ -251,30 +275,30 @@
         </section>
 
         <section class="scroll-reveal">
-            <h2 class="text-center mb-12 tracking-widest">SYSTEM ANALYSIS</h2>
+            <h2 class="text-center mb-12 tracking-widest">BRIEFLY ABOUT THE MECHANICS</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-lg">
                 <div class="hud-card scroll-reveal">
                     <h3 class="font-bold text-2xl mb-3 text-white">01: DYNAMIC ACOUSTICS</h3>
-                    <p>Звук поширюється із реалістичною затримкою, відбивається від стін у печерах та глушиться перешкодами. Величезна бібліотека звуків для кожної ситуації.</p>
+                    <p>Sound propagates with realistic delay, reflects off walls in caves, and is muffled by obstacles. A vast library of sounds for every situation.</p>
                 </div>
                 <div class="hud-card scroll-reveal" style="transition-delay: 200ms;">
                     <h3 class="font-bold text-2xl mb-3 text-white">02: CINEMATIC VISUALS</h3>
-                    <p>Динамічна вогняна куля, що розширюється, та довготривалий дим, що реалістично розсіюється. Частинки остигають, змінюючи колір від вогню до сажі.</p>
+                    <p>A dynamic, expanding fireball and long-lasting smoke that realistically dissipates. Particles cool down, changing color from fire to soot.</p>
                 </div>
                 <div class="hud-card scroll-reveal" style="transition-delay: 400ms;">
                     <h3 class="font-bold text-2xl mb-3 text-white">03: WORLD INTERACTION</h3>
-                    <p>Форма кратерів залежить від потужності та ландшафту. Ударна хвиля розкидає уламки, а вибух у печері може спричинити масштабний обвал.</p>
+                    <p>The shape of craters depends on the blast's power and the terrain. The shockwave scatters debris, and a cave explosion can cause a massive collapse.</p>
                 </div>
                 <div class="hud-card scroll-reveal" style="transition-delay: 600ms;">
                     <h3 class="font-bold text-2xl mb-3 text-white">04: IMMERSIVE EFFECTS</h3>
-                    <p>Реалістична тряска камери від ударної хвилі. Потужні вибухи імітують ЕМІ, виводячи з ладу редстоун-лампи та змушуючи їх моторошно мерехтіти.</p>
+                    <p>Realistic camera shake from the shockwave. Powerful explosions simulate an EMP, disabling redstone lamps and causing them to flicker eerily.</p>
                 </div>
             </div>
         </section>
 
         <section class="text-center scroll-reveal">
              <h2 class="mb-8 tracking-widest">COMMUNICATION CHANNELS</h2>
-             <p class="text-xl max-w-3xl mx-auto text-gray-400 mb-10">Слідкуйте за розробкою проєкту та першими отримуйте доступ до нових даних.</p>
+             <p class="text-xl max-w-3xl mx-auto text-gray-400 mb-10">Follow the project's development and be the first to get access to new data.</p>
              <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
                 <a href="https://www.youtube.com/channel/UC-rnr1Lbv_wvWgM1BgJjtKw" target="_blank" rel="noopener noreferrer" class="link-social">
                     YOUTUBE ARCHIVE
@@ -288,7 +312,7 @@
     </main>
 
     <footer class="text-center py-10 mt-16 border-t border-white/10">
-        <p class="text-gray-600 tracking-widest">[END TRANSMISSION] &copy; 2025 EXPLOSION OVERHAUL</p>
+        <p class="text-gray-600 tracking-widest">&copy; 2025 EXPLOSION OVERHAUL</p>
     </footer>
 
     <script>
