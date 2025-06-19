@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explosion Overhaul: Analysis</title>
+    <title>Explosion Overhaul Mod - Minecraft Mod for a New Level of Destruction</title>
+	<meta name="description" content="Discover Explosion Overhaul - a cinematic Minecraft mod that transforms explosions into a spectacular experience with dynamic sound, visuals, and world interaction.">
+	<meta name="keywords" content="Explosion Overhaul, Explosion Overhaul mod, Explosion mod, Explosion mods, Minecraft mod, Minecraft mods, explosions, cinematic, modding, Minecraft, game mod">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -125,20 +127,8 @@
             50% { border-color: var(--accent-color); }
         }
 
-        /* --- НОВИЙ ЕФЕКТ: Світіння знизу --- */
-        .bottom-glow {
-            position: fixed;
-            bottom: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150%;
-            height: 200px;
-            background: radial-gradient(circle at 50% 100%, hsla(33, 100%, 50%, 0.4) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.3;
-            animation: pulse-glow-bottom 7s ease-in-out infinite;
-        }
+
+        
 
         @keyframes pulse-glow-bottom {
             0%, 100% { opacity: 0.2; transform: translateX(-50%) scale(1); }
@@ -227,13 +217,14 @@
     <div class="scanlines"></div>
     <div class="vignette"></div>
     <canvas id="particle-canvas"></canvas>
-    <div class="bottom-glow"></div> <!-- Новий елемент для світіння -->
+
 
     <header class="hero">
         <div class="relative z-10">
-            <h1>EXPLOSION OVERHAUL</h1>
+            <h1>EXPLOSION OVERHAUL mod</h1>
             <div class="typewriter mt-4 text-xl md:text-2xl">
                 <p>> A NEW LEVEL OF DESTRUCTION_</p>
+				<p>> Dev</p>
             </div>
         </div>
     </header>
