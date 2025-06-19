@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explosion Overhaul: Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent-color: #FF8A00;
+            --bg-color: #02040A;
+            --text-color: #D0D8E8;
+            --scanline-opacity: 0.05;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Roboto Mono', monospace;
+            overflow-x: hidden;
+        }
+
+        /* --- BACKGROUND EFFECTS --- */
+        #background-wrapper {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -3;
+        }
+
+        #grid-canvas {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0.3;
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        .scanlines {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 98%, rgba(255,255,255,var(--scanline-opacity)) 100%);
+            background-size: 100% 4px;
+            animation: scan 10s linear infinite;
+            z-index: -2;
+        }
+        @keyframes scan {
+            from { background-position-y: 0px; }
+            to { background-position-y: 400px; }
+        }
+        
+        .vignette {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            box-shadow: inset 0 0 200px rgba(0,0,0,0.7);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+        
+        /* НОВИЙ СТИЛЬ: Заголовок, що "активується" */
+        .hero h1 {
+            font-family: 'Audiowide', sans-serif;
+            font-size: clamp(3rem, 10vw, 6.5rem);
+            color: transparent; /* Початково текст прозорий */
+            text-transform: uppercase;
+            position: relative;
+            -webkit-text-stroke: 1px var(--accent-color); /* Обводка літер */
+            animation: text-reveal 3s steps(20, end) forwards;
+        }
+
+        @keyframes text-reveal {
+            0% {
+                color: transparent;
+                text-shadow: none;
+            }
+            70% {
+                color: var(--accent-color);
+                text-shadow: 0 0 15px var(--accent-color);
+            }
+            100% {
+                color: #fff;
+                text-shadow: 0 0 5px #fff, 0 0 15px var(--accent-color);
+            }
+        }
+        
+        /* Typing effect for subtitle */
+        .typewriter p {
+            overflow: hidden; 
+            border-right: .15em solid var(--accent-color);
+            white-space: nowrap; 
+            margin: 0 auto; 
+            letter-spacing: .15em;
+            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+            animation-delay: 2s; /* Затримка перед початком друкування */
+            opacity: 0; /* Початково невидимий */
+            animation-fill-mode: forwards; /* Зберігає кінцевий стан */
+        }
+        @keyframes typing {
+            from { width: 0; opacity: 1; }
+            to { width: 100%; opacity: 1; }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--accent-color); }
+        }
+
+        /* --- НОВИЙ ЕФЕКТ: Світіння знизу --- */
+        .bottom-glow {
+            position: fixed;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150%;
+            height: 200px;
+            background: radial-gradient(circle at 50% 100%, hsla(33, 100%, 50%, 0.4) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.3;
+            animation: pulse-glow-bottom 7s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow-bottom {
+            0%, 100% { opacity: 0.2; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.5; transform: translateX(-50%) scale(1.05); }
+            85% { opacity: 0.4; }
+            90% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+        }
+
+
+        /* --- GENERAL STYLING & HEADINGS --- */
+        h2, h3 {
+            font-family: 'Audiowide', sans-serif;
+            text-transform: uppercase;
+        }
+
+        h2 { font-size: clamp(2rem, 5vw, 3rem); color: #fff; }
+        h3 { font-size: clamp(1.2rem, 3vw, 1.5rem); color: #fff; }
+
+        /* --- INTERACTIVE CARDS --- */
+        .hud-card {
+            background: rgba(10, 20, 40, 0.2);
+            border: 1px solid rgba(255, 138, 0, 0.2);
+            backdrop-filter: blur(10px);
+            position: relative;
+            padding: 2rem;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .hud-card:hover {
+            background: rgba(10, 20, 40, 0.4);
+            border-color: var(--accent-color);
+        }
+        .hud-card::before, .hud-card::after {
+            content: '';
+            position: absolute;
+            width: 15px; height: 15px;
+            transition: all 0.3s;
+        }
+        .hud-card::before { top: 10px; left: 10px; border-top: 2px solid var(--accent-color); border-left: 2px solid var(--accent-color); }
+        .hud-card::after { bottom: 10px; right: 10px; border-bottom: 2px solid var(--accent-color); border-right: 2px solid var(--accent-color); }
+
+        /* --- VIDEO & LINKS --- */
+        .video-container {
+            border: 2px solid rgba(255, 138, 0, 0.3);
+            box-shadow: 0 0 20px rgba(255, 138, 0, 0.2);
+        }
+        .link-social {
+            color: var(--accent-color);
+            background-color: transparent;
+            padding: 0.75rem 2rem;
+            text-transform: uppercase;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            transition: all 0.2s ease-in-out;
+            border: 2px solid var(--accent-color);
+        }
+        .link-social:hover {
+            background-color: var(--accent-color);
+            color: #000;
+            box-shadow: 0 0 20px var(--accent-color);
+        }
+
+        /* --- SCROLL ANIMATION --- */
+        .scroll-reveal { 
+            opacity: 0; 
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            transform: translateY(50px);
+        }
+        .scroll-reveal.is-visible { 
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Scrollbar styles */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Background Effects -->
+    <div id="background-wrapper">
+        <canvas id="grid-canvas"></canvas>
+    </div>
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
+    <canvas id="particle-canvas"></canvas>
+    <div class="bottom-glow"></div> <!-- Новий елемент для світіння -->
+
+    <header class="hero">
+        <div class="relative z-10">
+            <h1>EXPLOSION OVERHAUL</h1>
+            <div class="typewriter mt-4 text-xl md:text-2xl">
+                <p>> A NEW LEVEL OF DESTRUCTION_</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24 py-24">
+        
+        <section class="text-center scroll-reveal">
+            <h2 class="tracking-widest">DEBRIEFING: PROJECT OVERHAUL</h2>
+            <p class="max-w-4xl mx-auto mt-6 text-lg md:text-xl leading-relaxed text-gray-400">
+                Забудьте все, що ви знали про вибухи у Minecraft. **Explosion Overhaul** — це мод, що перетворює кожен вибух на унікальне, кінематографічне та захоплююче видовище. Ми прагнемо до максимального реалізму, щоб ви відчували всю міць та наслідки кожного "буму!".
+            </p>
+        </section>
+
+        <section class="scroll-reveal">
+            <h2 class="text-center mb-12 tracking-widest">ARCHIVED FOOTAGE</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="video-container relative h-0 pb-[56.25%] scroll-reveal">
+                     <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/Fyw1Z-DGB0E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+                <div class="video-container relative h-0 pb-[56.25%] scroll-reveal" style="transition-delay: 200ms;">
+                     <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/K2v9xYTRvO4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+            </div>
+        </section>
+
+        <section class="scroll-reveal">
+            <h2 class="text-center mb-12 tracking-widest">SYSTEM ANALYSIS</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-lg">
+                <div class="hud-card scroll-reveal">
+                    <h3 class="font-bold text-2xl mb-3 text-white">01: DYNAMIC ACOUSTICS</h3>
+                    <p>Звук поширюється із реалістичною затримкою, відбивається від стін у печерах та глушиться перешкодами. Величезна бібліотека звуків для кожної ситуації.</p>
+                </div>
+                <div class="hud-card scroll-reveal" style="transition-delay: 200ms;">
+                    <h3 class="font-bold text-2xl mb-3 text-white">02: CINEMATIC VISUALS</h3>
+                    <p>Динамічна вогняна куля, що розширюється, та довготривалий дим, що реалістично розсіюється. Частинки остигають, змінюючи колір від вогню до сажі.</p>
+                </div>
+                <div class="hud-card scroll-reveal" style="transition-delay: 400ms;">
+                    <h3 class="font-bold text-2xl mb-3 text-white">03: WORLD INTERACTION</h3>
+                    <p>Форма кратерів залежить від потужності та ландшафту. Ударна хвиля розкидає уламки, а вибух у печері може спричинити масштабний обвал.</p>
+                </div>
+                <div class="hud-card scroll-reveal" style="transition-delay: 600ms;">
+                    <h3 class="font-bold text-2xl mb-3 text-white">04: IMMERSIVE EFFECTS</h3>
+                    <p>Реалістична тряска камери від ударної хвилі. Потужні вибухи імітують ЕМІ, виводячи з ладу редстоун-лампи та змушуючи їх моторошно мерехтіти.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="text-center scroll-reveal">
+             <h2 class="mb-8 tracking-widest">COMMUNICATION CHANNELS</h2>
+             <p class="text-xl max-w-3xl mx-auto text-gray-400 mb-10">Слідкуйте за розробкою проєкту та першими отримуйте доступ до нових даних.</p>
+             <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+                <a href="https://www.youtube.com/channel/UC-rnr1Lbv_wvWgM1BgJjtKw" target="_blank" rel="noopener noreferrer" class="link-social">
+                    YOUTUBE ARCHIVE
+                </a>
+                <a href="https://www.tiktok.com/@explosion.overhaul" target="_blank" rel="noopener noreferrer" class="link-social">
+                    TIKTOK FEED
+                </a>
+             </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-10 mt-16 border-t border-white/10">
+        <p class="text-gray-600 tracking-widest">[END TRANSMISSION] &copy; 2025 EXPLOSION OVERHAUL</p>
+    </footer>
+
+    <script>
+        // --- Combined Script Logic ---
+
+        // 1. Scroll Reveal Animation
+        const revealElements = document.querySelectorAll('.scroll-reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        revealElements.forEach(el => observer.observe(el));
+
+
+        // 2. Animated Grid Background
+        const gridCanvas = document.getElementById('grid-canvas');
+        if (gridCanvas) {
+            const gridCtx = gridCanvas.getContext('2d');
+            let cols, rows;
+            let scale = 20;
+
+            function setupGrid() {
+                gridCanvas.width = window.innerWidth;
+                gridCanvas.height = window.innerHeight;
+                cols = Math.floor(gridCanvas.width / scale);
+                rows = Math.floor(gridCanvas.height / scale);
+            }
+
+            function drawGrid() {
+                gridCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
+                gridCtx.strokeStyle = 'rgba(255, 138, 0, 0.1)';
+                gridCtx.lineWidth = 0.5;
+                for (let i = 0; i <= cols; i++) {
+                    gridCtx.beginPath();
+                    gridCtx.moveTo(i * scale, 0);
+                    gridCtx.lineTo(i * scale, gridCanvas.height);
+                    gridCtx.stroke();
+                }
+                for (let i = 0; i <= rows; i++) {
+                    gridCtx.beginPath();
+                    gridCtx.moveTo(0, i * scale);
+                    gridCtx.lineTo(gridCanvas.width, i * scale);
+                    gridCtx.stroke();
+                }
+            }
+            
+            window.addEventListener('resize', setupGrid);
+            setupGrid();
+            drawGrid();
+        }
+
+        // 3. Three.js Particle System (Sparks)
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 5;
+        const renderer = new THREE.WebGLRenderer({ 
+            canvas: document.getElementById('particle-canvas'),
+            alpha: true 
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const particleCount = 2000;
+        const positions = new Float32Array(particleCount * 3);
+        const velocities = new Float32Array(particleCount * 3);
+        const geometry = new THREE.BufferGeometry();
+        
+        const accentColor = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim());
+
+        for (let i = 0; i < particleCount; i++) {
+            let i3 = i * 3;
+            positions[i3] = (Math.random() - 0.5) * 15;
+            positions[i3 + 1] = (Math.random() - 0.5) * 15;
+            positions[i3 + 2] = (Math.random() - 0.5) * 15;
+            
+            velocities[i3] = 0; // x
+            velocities[i3 + 1] = (Math.random() * 0.005) + 0.001; // y (upward drift)
+            velocities[i3 + 2] = 0; // z
+        }
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+        const material = new THREE.PointsMaterial({
+            size: 0.02,
+            color: accentColor,
+            blending: THREE.AdditiveBlending,
+            transparent: true,
+            opacity: 0.7,
+            sizeAttenuation: true
+        });
+
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+
+        const clock = new THREE.Clock();
+
+        const animateParticles = () => {
+            const elapsedTime = clock.getElapsedTime();
+            const positionsArray = geometry.attributes.position.array;
+
+            for (let i = 0; i < particleCount; i++) {
+                let i3 = i * 3;
+                positionsArray[i3 + 1] += velocities[i3 + 1]; 
+                
+                if (positionsArray[i3 + 1] > 8) {
+                    positionsArray[i3 + 1] = -8;
+                    positionsArray[i3] = (Math.random() - 0.5) * 15;
+                }
+            }
+            geometry.attributes.position.needsUpdate = true;
+
+            particles.rotation.y = elapsedTime * 0.05;
+            particles.rotation.x = elapsedTime * 0.02;
+
+
+            renderer.render(scene, camera);
+            window.requestAnimationFrame(animateParticles);
+        };
+        animateParticles();
+
+        // General resize listener
+        window.addEventListener('resize', () => {
+            // Three.js camera
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // Grid Canvas
+            if(gridCanvas) {
+                setupGrid();
+                drawGrid();
+            }
+        });
+    </script>
+</body>
+</html>
