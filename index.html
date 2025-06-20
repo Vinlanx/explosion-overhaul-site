@@ -11,7 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --accent-color: #FF8A00;
@@ -20,7 +20,14 @@
             --scanline-opacity: 0.05;
         }
 
-        body {
+        @font-face {
+  font-family: 'MinecraftEvenings';
+  src: url('fonts/MinecraftEvenings.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+		
+	    body {
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: 'Roboto Mono', monospace;
@@ -49,7 +56,8 @@
         }
         
         .glow {
-           font-weight: bold;
+           font-family: 'minecrafter', sans-serif;
+		   font-weight: bold;
            color: var(--accent-color);
            text-shadow: 0 0 8px var(--accent-color);
         }
@@ -79,7 +87,8 @@
 
         /* --- HERO SECTION --- */
         .hero {
-            height: 100vh;
+            font-family: 'MinecraftEvenings', sans-serif;
+			height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -88,7 +97,7 @@
         }
         
         .hero h1 {
-            font-family: 'Audiowide', sans-serif;
+            font-family: 'MinecraftEvenings', sans-serif;
             font-size: clamp(3rem, 10vw, 6.5rem);
             color: transparent;
             text-transform: uppercase;
