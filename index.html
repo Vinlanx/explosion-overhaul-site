@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-T6617GM8QE"></script>
     <script>
     window.dataLayer = window.dataLayer || [];
@@ -30,11 +29,11 @@
         }
 
         @font-face {
-  font-family: 'MinecraftEvenings';
-  src: url('MinecraftEvenings.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
+          font-family: 'MinecraftEvenings';
+          src: url('MinecraftEvenings.ttf') format('truetype');
+          font-weight: normal;
+          font-style: normal;
+        }
 		
 	    body {
             background-color: var(--bg-color);
@@ -43,7 +42,6 @@
             overflow-x: hidden;
         }
 
-        /* --- BACKGROUND EFFECTS --- */
         #background-wrapper {
             position: fixed;
             top: 0; left: 0;
@@ -94,35 +92,28 @@
             z-index: 1;
         }
 
-        /* --- HERO SECTION --- */
-        
 		.hero-logo {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid rgba(255, 138, 0, 0.4);
-    outline: 2px solid rgba(255, 138, 0, 0.15);
-    outline-offset: 3px; /* Відстань між рамками */
-    opacity: 0;
-    animation: logo-fade-in 2s 0.5s ease-out forwards;
-}
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255, 138, 0, 0.4);
+            outline: 2px solid rgba(255, 138, 0, 0.15);
+            outline-offset: 3px;
+            opacity: 0;
+            animation: logo-fade-in 2s 0.5s ease-out forwards;
+        }
 
-
-
-
-
-@keyframes logo-fade-in {
-    from {
-        opacity: 0;
-        transform: scale(0.8);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-		
+        @keyframes logo-fade-in {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
 		
 		.hero {
             font-family: 'MinecraftEvenings', sans-serif;
@@ -203,8 +194,6 @@
             100% { opacity: 0.7; }
         }
 
-
-        /* --- GENERAL STYLING & HEADINGS --- */
         h2, h3 {
             font-family: 'Audiowide', sans-serif;
             text-transform: uppercase;
@@ -213,7 +202,6 @@
         h2 { font-size: clamp(2rem, 5vw, 3rem); color: #fff; }
         h3 { font-size: clamp(1.2rem, 3vw, 1.5rem); color: #fff; }
 
-        /* --- INTERACTIVE CARDS --- */
         .hud-card {
             background: rgba(10, 20, 40, 0.2);
             border: 1px solid rgba(255, 138, 0, 0.2);
@@ -221,6 +209,8 @@
             position: relative;
             padding: 2rem;
             transition: background 0.3s, border-color 0.3s;
+            display: flex;
+            flex-direction: column;
         }
         .hud-card:hover {
             background: rgba(10, 20, 40, 0.4);
@@ -234,8 +224,25 @@
         }
         .hud-card::before { top: 10px; left: 10px; border-top: 2px solid var(--accent-color); border-left: 2px solid var(--accent-color); }
         .hud-card::after { bottom: 10px; right: 10px; border-bottom: 2px solid var(--accent-color); border-right: 2px solid var(--accent-color); }
+        .hud-card ul {
+            list-style-type: none;
+            padding-left: 1.5rem;
+            margin-top: 1rem;
+            color: var(--text-color);
+            flex-grow: 1;
+        }
+        .hud-card ul li {
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+        .hud-card ul li::before {
+            content: '»';
+            position: absolute;
+            left: -1.5rem;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
 
-        /* --- VIDEO & LINKS --- */
         .video-container {
             border: 2px solid rgba(255, 138, 0, 0.3);
             box-shadow: 0 0 20px rgba(255, 138, 0, 0.2);
@@ -257,7 +264,6 @@
             box-shadow: 0 0 20px var(--accent-color);
         }
 
-        /* --- SCROLL ANIMATION --- */
         .scroll-reveal { 
             opacity: 0; 
             transition: opacity 0.8s ease-out, transform 0.8s ease-out;
@@ -268,7 +274,6 @@
             transform: translateY(0);
         }
         
-        /* Scrollbar styles */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg-color); }
         ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 4px; }
@@ -276,7 +281,6 @@
     </style>
 </head>
 <body class="antialiased">
-    <!-- Background Effects -->
     <div id="background-wrapper">
         <canvas id="grid-canvas"></canvas>
     </div>
@@ -346,6 +350,52 @@
             </div>
         </section>
 
+        <section class="scroll-reveal">
+            <h2 class="text-center mb-12 tracking-widest">UPDATE LOG: 29.06.2025</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-base">
+                
+                <div class="hud-card scroll-reveal">
+                    <div class="flex items-center mb-4">
+                        <svg class="w-8 h-8 mr-4" style="color: var(--accent-color);" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <h3 class="font-bold text-xl text-white">DYNAMIC SOUND</h3>
+                    </div>
+                    <ul>
+                        <li>The sound of an explosion now depends on the distance.</li>
+                        <li>The environment matters! An explosion in a cave will echo loudly.</li>
+                        <li>Power matters! A weak creeper and a huge TNT detonation sound different.</li>
+                        <li>Sound travels at a realistic speed (flash first, then sound).</li>
+                        <li>Positional audio: turn your head to locate the sound source.</li>
+                    </ul>
+                </div>
+
+                <div class="hud-card scroll-reveal" style="transition-delay: 200ms;">
+                    <div class="flex items-center mb-4">
+                        <svg class="w-8 h-8 mr-4" style="color: var(--accent-color);" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <h3 class="font-bold text-xl text-white">VISUAL EFFECTS</h3>
+                    </div>
+                    <ul>
+                        <li>Now every explosion is a spectacular, dynamically expanding fireball.</li>
+                        <li>Bright sparks fly from the epicenter.</li>
+                        <li>The fireball itself gradually cools, turning into thick smoke.</li>
+                    </ul>
+                </div>
+
+                <div class="hud-card scroll-reveal" style="transition-delay: 400ms;">
+                    <div class="flex items-center mb-4">
+                        <svg class="w-8 h-8 mr-4" style="color: var(--accent-color);" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <h3 class="font-bold text-xl text-white">TANGIBLE IMPACT</h3>
+                    </div>
+                    <ul>
+                        <li><b>Camera Shake:</b> Feel the shockwave! The screen will shake from powerful explosions.</li>
+                        <li><b>Cave-ins:</b> Powerful underground explosions will cause the ceiling to tremble.</li>
+                        <li><b>Power Surges:</b> The shockwave can temporarily disrupt the power grid, making Redstone lamps flicker.</li>
+                        <li><b>New Destruction:</b> Explosion craters now look more realistic, with scattered debris.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
         <section class="text-center scroll-reveal">
              <h2 class="mb-8 tracking-widest">COMMUNICATION CHANNELS</h2>
              <p class="text-xl max-w-3xl mx-auto text-gray-400 mb-10">Follow the project's development and be the first to get access to new data.</p>
@@ -366,9 +416,6 @@
     </footer>
 
     <script>
-        // --- Combined Script Logic ---
-
-        // 1. Scroll Reveal Animation
         const revealElements = document.querySelectorAll('.scroll-reveal');
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -379,8 +426,6 @@
         }, { threshold: 0.1 });
         revealElements.forEach(el => observer.observe(el));
 
-
-        // 2. Animated Grid Background
         const gridCanvas = document.getElementById('grid-canvas');
         if (gridCanvas) {
             const gridCtx = gridCanvas.getContext('2d');
@@ -417,18 +462,15 @@
             drawGrid();
         }
 
-        // 3. Three.js Particle System (Sparks)
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.z = 5;
 
-        // --- ОПТИМІЗАЦІЯ ДЛЯ iOS v4 ---
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
         const renderer = new THREE.WebGLRenderer({ 
             canvas: document.getElementById('particle-canvas'),
             alpha: true,
-            // Додаємо спеціальні параметри для iOS
             powerPreference: isIOS ? 'low-power' : 'default',
             precision: isIOS ? 'lowp' : 'highp'
         });
@@ -494,7 +536,6 @@
         };
         animateParticles();
 
-        // General resize listener
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
