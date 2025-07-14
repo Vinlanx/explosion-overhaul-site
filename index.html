@@ -23,6 +23,7 @@
     <style>
         :root {
             --accent-color: #FF8A00;
+            --available-color: #00FF00; /* Original green, now mostly unused for status but kept */
             --bg-color: #02040A;
             --text-color: #D0D8E8;
             --scanline-opacity: 0.05;
@@ -64,7 +65,6 @@
         
         .glow {
            font-family: 'MinecraftEvenings', sans-serif;
-		   
            color: var(--accent-color);
            text-shadow: 0 0 8px var(--accent-color);
         }
@@ -116,7 +116,7 @@
         }
 		
 		.hero {
-            font-family: 'MinecraftEvenings', sans-serif;
+            font-family: 'MinecraftEvenings', sans-serif; /* Ensuring this is applied */
 			height: 100vh;
             display: flex;
             align-items: center;
@@ -172,19 +172,38 @@
         
         .dev-status {
             margin-top: 2rem;
-            display: inline-block;
-            background: rgba(255, 138, 0, 0.05);
-            border: 1px solid rgba(255, 138, 0, 0.2);
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
             padding: 0.5rem 1rem;
-            color: var(--accent-color);
             text-transform: uppercase;
             letter-spacing: 0.1em;
             font-size: 0.9rem;
             opacity: 0;
             animation: fade-in-flicker 4s forwards;
             animation-delay: 3s;
+            color: var(--accent-color); /* Restored to accent-color */
+            border: 1px solid rgba(255, 138, 0, 0.2);
+            background: rgba(255, 138, 0, 0.05);
+            width: fit-content;
+        }
+
+        /* Styles for AVAILABLE status with stronger glow, now using accent-color */
+        .dev-status.available {
+            background: rgba(255, 138, 0, 0.05); /* Adjusted to orange */
+            border: 1px solid rgba(255, 138, 0, 0.4); /* Adjusted to orange */
+            color: var(--accent-color); /* Set to accent-color */
+            text-shadow: 0 0 8px var(--accent-color), 0 0 15px rgba(255, 138, 0, 0.5); /* Adjusted to orange */
+            animation: available-fade-in-glow 4s forwards; /* Reusing for orange glow */
         }
         
+        /* Adjusted keyframes for orange glow */
+        @keyframes available-fade-in-glow {
+            0% { opacity: 0; text-shadow: none; }
+            70% { opacity: 1; text-shadow: 0 0 10px var(--accent-color), 0 0 20px rgba(255, 138, 0, 0.5); }
+            100% { opacity: 1; text-shadow: 0 0 15px var(--accent-color), 0 0 25px rgba(255, 138, 0, 0.6); }
+        }
+
         @keyframes fade-in-flicker {
             0% { opacity: 0; }
             50% { opacity: 0; }
@@ -257,12 +276,55 @@
             letter-spacing: 0.1em;
             transition: all 0.2s ease-in-out;
             border: 2px solid var(--accent-color);
+            font-family: 'Roboto Mono', monospace; /* Default font */
         }
         .link-social:hover {
             background-color: var(--accent-color);
             color: #000;
             box-shadow: 0 0 20px var(--accent-color);
         }
+
+        /* Styles for the new download button */
+        .download-button {
+            display: flex; /* Use flexbox for icon and text alignment */
+            align-items: center; /* Vertically center icon and text */
+            justify-content: center; /* Horizontally center content */
+            margin-top: 1.5rem; /* Space below the status text */
+            margin-left: auto; /* Centering */
+            margin-right: auto; /* Centering */
+            padding: 0.75rem 2rem;
+            text-transform: uppercase;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            transition: all 0.2s ease-in-out;
+            border: 2px solid var(--accent-color); /* Button border uses accent color */
+            color: var(--accent-color); /* Button text uses accent color */
+            text-shadow: 0 0 8px var(--accent-color); /* Initial glow uses accent color */
+            font-family: 'MinecraftEvenings', sans-serif; /* Apply MinecraftEvenings font */
+            background-color: transparent;
+            opacity: 0; /* Initially hidden */
+            animation: available-fade-in-glow 4s forwards; /* Use orange glow animation */
+            animation-delay: 3.5s; /* Delay it slightly after status appears */
+            width: fit-content; /* Allow content to dictate width for centering */
+        }
+        .download-button:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color); /* Dark text on hover */
+            box-shadow: 0 0 20px var(--accent-color);
+            text-shadow: none; /* Remove text shadow on hover for cleaner look */
+        }
+
+        .download-button img {
+            width: 24px; /* Adjust icon size as needed */
+            height: 24px;
+            margin-right: 8px; /* Space between icon and text */
+            vertical-align: middle; /* Align with text baseline */
+        }
+		
+		.download-button:hover img {
+    filter: brightness(0); /* Робить іконку чорною при наведенні на всю кнопку */
+}
 
         .scroll-reveal { 
             opacity: 0; 
@@ -295,9 +357,12 @@
             <div class="typewriter mt-4 text-xl md:text-2xl">
                 <p>> A NEW LEVEL OF DESTRUCTION_</p>
             </div>
-            <div class="dev-status">
-                <p>// STATUS: DEVELOPMENT IN PROGRESS.</p>
+            <div class="dev-status available">
+                <p>// STATUS: ALPHA</p>
             </div>
+            <a href="https://www.curseforge.com/minecraft/mc-mods/explosion-overhaul-a-new-level-of-destruction" target="_blank" rel="noopener noreferrer" class="download-button">
+                <img src="curseforge_icon.png" alt="CurseForge Icon">DOWNLOAD
+            </a>
         </div>
     </header>
 
